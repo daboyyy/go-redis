@@ -1,6 +1,7 @@
 package main
 
 import (
+	"go-redis/handlers"
 	"go-redis/repositories"
 	"go-redis/services"
 
@@ -16,13 +17,10 @@ func main() {
 
 	productRepo := repositories.NewProductRepositoryDB(db)
 	productService := services.NewCatalogServiceRedis(productRepo, redisClient)
-	_ = productService
+	productHandler := handlers.NewCatalogHandler(productService)
 
 	app := fiber.New()
-	app.Get("/hello", func(c *fiber.Ctx) error {
-		// time.Sleep(time.Millisecond * 10)
-		return c.SendString("Hello World")
-	})
+	app.Get("/products", productHandler.GetProducts)
 	app.Listen(":8000")
 }
 
