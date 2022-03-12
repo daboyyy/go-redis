@@ -2,6 +2,7 @@ package main
 
 import (
 	"go-redis/repositories"
+	"go-redis/services"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/go-redis/redis/v8"
@@ -12,10 +13,10 @@ import (
 func main() {
 	db := initDatabase()
 	redisClient := initRedis()
-	_ = redisClient
 
 	productRepo := repositories.NewProductRepositoryDB(db)
-	_ = productRepo
+	productService := services.NewCatalogServiceRedis(productRepo, redisClient)
+	_ = productService
 
 	app := fiber.New()
 	app.Get("/hello", func(c *fiber.Ctx) error {
